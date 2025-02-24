@@ -3,7 +3,8 @@ import { StorageManager } from '../services/StorageManager.js';
 export class ThemeManager {
     constructor() {
         this.storage = new StorageManager();
-        this.darkModeSwitch = document.getElementById('dark-mode-switch');
+        this.darkModeBtn = document.getElementById('dark-mode-btn');
+        this.darkModeIcon = this.darkModeBtn?.querySelector('.material-icons');
         this.init();
     }
 
@@ -11,6 +12,10 @@ export class ThemeManager {
         const isDarkMode = this.storage.getDarkMode();
         if (isDarkMode) {
             this.enableDarkMode();
+        }
+
+        if (this.darkModeBtn) {
+            this.darkModeBtn.addEventListener('click', () => this.toggle());
         }
     }
 
@@ -25,13 +30,17 @@ export class ThemeManager {
 
     enableDarkMode() {
         document.documentElement.setAttribute('data-theme', 'dark');
-        this.darkModeSwitch.classList.add('active');
+        if (this.darkModeIcon) {
+            this.darkModeIcon.textContent = 'dark_mode';
+        }
         this.storage.setDarkMode(true);
     }
 
     disableDarkMode() {
         document.documentElement.removeAttribute('data-theme');
-        this.darkModeSwitch.classList.remove('active');
+        if (this.darkModeIcon) {
+            this.darkModeIcon.textContent = 'light_mode';
+        }
         this.storage.setDarkMode(false);
     }
 }
