@@ -25,7 +25,9 @@ export class NoteService {
             content
         );
         this.notes.unshift(newNote);
-        this.saveNotes();
+        if (title.trim()) {  // Only save if title is not empty
+            this.saveNotes();
+        }
         return newNote;
     }
 
@@ -56,7 +58,9 @@ export class NoteService {
     }
 
     saveNotes() {
-        this.storage.saveNotes(this.notes);
+        // Filter out notes with empty titles before saving
+        const validNotes = this.notes.filter(note => note.title.trim());
+        this.storage.saveNotes(validNotes);
     }
 
     searchNotes(searchTerm) {
