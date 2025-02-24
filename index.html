@@ -39,7 +39,9 @@
         <!-- Detail View -->
         <div class="view detail-view">
             <div class="header">
-                <button class="btn back-btn" id="back-btn">Notes</button>
+                <button class="btn back-btn" id="back-btn">
+                    <span class="material-icons">arrow_back</span>
+                </button>
                 <div class="header-actions">
                     <button class="btn" id="mode-toggle-btn">
                         <span class="material-icons">edit</span>
@@ -47,6 +49,13 @@
                 </div>
             </div>
             <div class="toolbar">
+                <button class="toolbar-btn" onclick="app.undo()">
+                    <span class="material-icons">undo</span>
+                </button>
+                <button class="toolbar-btn" onclick="app.redo()">
+                    <span class="material-icons">redo</span>
+                </button>
+                <div class="toolbar-separator"></div>
                 <button class="toolbar-btn" onclick="formatText('bold')"><b>B</b></button>
                 <button class="toolbar-btn" onclick="formatText('italic')"><i>I</i></button>
                 <button class="toolbar-btn" onclick="formatText('underline')"><u>U</u></button>

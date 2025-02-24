@@ -70,9 +70,17 @@ class NotesApp {
         // Add this to existing properties in constructor
         this.textSizes = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
 
+        // Add these properties for undo/redo support
+        this.undoStack = [];
+        this.redoStack = [];
+        this.lastChangeTime = 0;
+        this.changeDebounceTime = 0; // Remove debounce to track every change
+        this.isComposing = false; // Track IME composition
+
         // Initialize
         this.loadNotes(); // Replace this.renderNotesList()
         this.initializeDarkMode();
+        this.setupUndoRedoTracking();
     }
 
     handleEditorKeydown(e) {
@@ -291,6 +299,11 @@ class NotesApp {
             '<span class="material-icons">done</span>' : 
             '<span class="material-icons">edit</span>';
         this.toolbar.classList.toggle('visible', this.isEditing);
+        if (this.isEditing) {
+            this.undoStack = [];
+            this.redoStack = [];
+            this.pushToUndoStack(); // Save initial state when entering edit mode
+        }
     }
 
     createNewNote() {
@@ -531,6 +544,171 @@ class NotesApp {
             noteElement.addEventListener('click', () => this.setActiveNote(note.id));
             this.notesList.appendChild(noteElement);
         });
+    }
+
+    setupUndoRedoTracking() {
+        // Track individual keystrokes and formatting changes
+        this.editor.addEventListener('input', (e) => {
+            // Don't push to stack during IME composition
+            if (this.isComposing) return;
+            
+            // Handle input events
+            this.pushToUndoStack();
+        });
+
+        // Track IME composition (for languages like Chinese, Japanese, Korean)
+        this.editor.addEventListener('compositionstart', () => {
+            this.isComposing = true;
+        });
+
+        this.editor.addEventListener('compositionend', () => {
+            this.isComposing = false;
+            this.pushToUndoStack();
+        });
+
+        // Track formatting commands
+        this.editor.addEventListener('keydown', (e) => {
+            // Push to stack before format changes
+            if ((e.ctrlKey || e.metaKey) && 
+                (e.key === 'b' || e.key === 'i' || e.key === 'u' ||
+                 e.key === 'z' || e.key === 'y')) {
+                e.preventDefault();
+                
+                if (e.key === 'z') {
+                    if (e.shiftKey) {
+                        this.redo();
+                    } else {
+                        this.undo();
+                    }
+                    return;
+                }
+                
+                if (e.key === 'y') {
+                    this.redo();
+                    return;
+                }
+
+                this.pushToUndoStack();
+                
+                // Handle formatting shortcuts
+                switch (e.key) {
+                    case 'b': document.execCommand('bold'); break;
+                    case 'i': document.execCommand('italic'); break;
+                    case 'u': document.execCommand('underline'); break;
+                }
+            }
+        });
+    }
+
+    pushToUndoStack() {
+        const currentState = {
+            content: this.editor.innerHTML,
+            selection: this.saveSelection(),
+            timestamp: Date.now()
+        };
+        
+        this.undoStack.push(currentState);
+        this.redoStack = []; // Clear redo stack when new changes occur
+        
+        // Limit stack size to prevent memory issues
+        if (this.undoStack.length > 1000) { // Increased limit for more granular history
+            this.undoStack.shift();
+        }
+    }
+
+    saveSelection() {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            return {
+                startContainer: this.getNodePath(range.startContainer),
+                startOffset: range.startOffset,
+                endContainer: this.getNodePath(range.endContainer),
+                endOffset: range.endOffset
+            };
+        }
+        return null;
+    }
+
+    getNodePath(node) {
+        const path = [];
+        while (node !== this.editor) {
+            if (node.parentNode) {
+                path.unshift(Array.from(node.parentNode.childNodes).indexOf(node));
+                node = node.parentNode;
+            } else {
+                break;
+            }
+        }
+        return path;
+    }
+
+    restoreSelection(savedSelection) {
+        if (!savedSelection) return;
+
+        const getNodeFromPath = (path) => {
+            let node = this.editor;
+            for (const index of path) {
+                node = node.childNodes[index];
+                if (!node) return null;
+            }
+            return node;
+        };
+
+        const startNode = getNodeFromPath(savedSelection.startContainer);
+        const endNode = getNodeFromPath(savedSelection.endContainer);
+
+        if (startNode && endNode) {
+            const range = document.createRange();
+            range.setStart(startNode, savedSelection.startOffset);
+            range.setEnd(endNode, savedSelection.endOffset);
+
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    }
+
+    undo() {
+        if (!this.isEditing || this.undoStack.length <= 1) return; // Keep at least one state
+
+        // Save current state to redo stack
+        const currentState = this.undoStack.pop();
+        this.redoStack.push(currentState);
+
+        // Restore previous state
+        const previousState = this.undoStack[this.undoStack.length - 1];
+        this.editor.innerHTML = previousState.content;
+        this.restoreSelection(previousState.selection);
+        this.saveNoteContent();
+
+        // Update toolbar state if needed
+        this.updateToolbarState();
+    }
+
+    redo() {
+        if (!this.isEditing || this.redoStack.length === 0) return;
+
+        // Get next state from redo stack
+        const nextState = this.redoStack.pop();
+        this.undoStack.push(nextState);
+
+        // Restore the state
+        this.editor.innerHTML = nextState.content;
+        this.restoreSelection(nextState.selection);
+        this.saveNoteContent();
+
+        // Update toolbar state if needed
+        this.updateToolbarState();
+    }
+
+    updateToolbarState() {
+        // Update undo/redo button states
+        const undoBtn = document.querySelector('.toolbar-btn [class*="undo"]').parentElement;
+        const redoBtn = document.querySelector('.toolbar-btn [class*="redo"]').parentElement;
+        
+        undoBtn.disabled = this.undoStack.length <= 1;
+        redoBtn.disabled = this.redoStack.length === 0;
     }
 }
 

@@ -248,12 +248,8 @@ body {
 .back-btn {
     display: flex;
     align-items: center;
-    gap: 4px;
-}
-
-.back-btn::before {
-    content: "←";
-    font-size: 18px;
+    justify-content: center;
+    min-width: 40px;
 }
 
 .notes-list {
@@ -363,6 +359,17 @@ body {
 
 .toolbar-btn:active {
     background-color: rgba(0, 122, 255, 0.2);
+}
+
+/* Update toolbar button styles */
+.toolbar-btn .material-icons {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.toolbar-btn:disabled {
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 .editor-container {
