@@ -17,13 +17,13 @@ export class TouchManager {
         if (!this.notesList) return;
 
         this.notesList.addEventListener('touchstart', (e) => this.handleNoteSwipeStart(e), { passive: true });
-        this.notesList.addEventListener('touchmove', (e) => this.handleNoteSwipeMove(e));
+        this.notesList.addEventListener('touchmove', (e) => this.handleNoteSwipeMove(e), { passive: false });
         this.notesList.addEventListener('touchend', (e) => this.handleNoteSwipeEnd(e), { passive: true });
 
         // Add detail view swipe handling
         if (this.detailView) {
             this.detailView.addEventListener('touchstart', (e) => this.handleDetailSwipeStart(e), { passive: true });
-            this.detailView.addEventListener('touchmove', (e) => this.handleDetailSwipeMove(e));
+            this.detailView.addEventListener('touchmove', (e) => this.handleDetailSwipeMove(e), { passive: false });
             this.detailView.addEventListener('touchend', (e) => this.handleDetailSwipeEnd(e), { passive: true });
         }
     }
