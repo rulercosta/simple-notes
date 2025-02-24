@@ -10,13 +10,15 @@ class NotesApp {
     constructor() {
         this.noteService = new NoteService();
         this.viewManager = new ViewManager();
+        
+        // Initialize DOM elements first
+        this.initializeDOMElements();
+        
+        // Now initialize ThemeManager after DOM elements are available
         this.themeManager = new ThemeManager();
         
         // Text sizes array
         this.textSizes = ['xs', 'sm', 'md', 'lg', 'xl'];
-        
-        // Initialize DOM elements
-        this.initializeDOMElements();
         
         // Initialize managers
         this.editorManager = new EditorManager(this.editor);
@@ -68,7 +70,7 @@ class NotesApp {
         this.modeToggleBtn = document.getElementById('mode-toggle-btn');
         this.toolbar = document.querySelector('.toolbar');
         this.titleInput = document.getElementById('note-title');
-        this.darkModeSwitch = document.getElementById('dark-mode-switch');
+        this.darkModeBtn = document.getElementById('dark-mode-btn');
         this.searchInput = document.getElementById('search-input');
         this.clearSearchBtn = document.getElementById('clear-search-btn');
     }
@@ -79,11 +81,10 @@ class NotesApp {
         this.modeToggleBtn.addEventListener('click', () => this.toggleEditMode());
         this.editor.addEventListener('input', () => this.saveNoteContent());
         this.titleInput.addEventListener('input', () => this.saveNoteContent());
-        this.darkModeSwitch.addEventListener('click', () => this.toggleDarkMode());
+        // Remove the darkModeBtn event listener since ThemeManager handles it
         this.searchInput.addEventListener('input', () => this.handleSearch());
         this.clearSearchBtn.addEventListener('click', () => this.clearSearch());
         
-        // Add new event listener for editor keydown
         this.editor.addEventListener('keydown', (e) => this.handleEditorKeydown(e));
     }
 
@@ -425,27 +426,6 @@ class NotesApp {
             hour: '2-digit',
             minute: '2-digit'
         });
-    }
-
-    // Dark mode
-    initializeDarkMode() {
-        const isDarkMode = localStorage.getItem('darkMode') === 'true';
-        if (isDarkMode) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            this.darkModeSwitch.classList.add('active');
-        }
-    }
-
-    toggleDarkMode() {
-        const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-        if (isDarkMode) {
-            document.documentElement.removeAttribute('data-theme');
-            this.darkModeSwitch.classList.remove('active');
-        } else {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            this.darkModeSwitch.classList.add('active');
-        }
-        localStorage.setItem('darkMode', (!isDarkMode).toString());
     }
 
     // Search functionality
