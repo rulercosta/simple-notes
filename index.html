@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+    <link rel="stylesheet" href="./static/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- List View -->
+        <div class="view list-view active">
+            <div class="header">
+                <h1 class="header-title">Notes</h1>
+                <button class="btn" id="new-note-btn">+</button>
+            </div>
+            <div class="notes-list" id="notes-list"></div>
+        </div>
+
+        <!-- Detail View -->
+        <div class="view detail-view">
+            <div class="header">
+                <button class="btn back-btn" id="back-btn">Notes</button>
+                <div class="header-actions">
+                    <button class="btn" id="mode-toggle-btn">Edit</button>
+                </div>
+            </div>
+            <div class="toolbar">
+                <button class="toolbar-btn" onclick="formatText('bold')"><b>B</b></button>
+                <button class="toolbar-btn" onclick="formatText('italic')"><i>I</i></button>
+                <button class="toolbar-btn" onclick="formatText('underline')"><u>U</u></button>
+                <button class="toolbar-btn" onclick="formatList('insertUnorderedList')">•</button>
+                <button class="toolbar-btn" onclick="formatList('insertOrderedList')">1.</button>
+            </div>
+            <div class="editor" contenteditable="false" id="editor"></div>
+        </div>
+    </div>
+    <script src="./static/script.js"></script>
+</body>
+</html>
