@@ -6,8 +6,12 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>Notes App</title>
     <link rel="stylesheet" href="./static/styles.css">
+    <script type="module">
+        import { ThemeManager } from './static/managers/ThemeManager.js';
+        ThemeManager.initializeTheme();
+    </script>
 </head>
-<body>
+<body class="theme-pending">
     <div class="app-container">
         <!-- List View -->
         <div class="view list-view active">
