@@ -1,6 +1,8 @@
 export class TouchManager {
     constructor(detailView, notesList, onSwipeBack, onDeleteNote) {
+        this.detailView = detailView;
         this.notesList = notesList;
+        this.onSwipeBack = onSwipeBack;
         this.onDeleteNote = onDeleteNote;
         
         this.swipeStartX = null;
@@ -12,9 +14,18 @@ export class TouchManager {
     }
 
     setupEventListeners() {
-        this.notesList.addEventListener('touchstart', (e) => this.handleNoteSwipeStart(e));
+        if (!this.notesList) return;
+
+        this.notesList.addEventListener('touchstart', (e) => this.handleNoteSwipeStart(e), { passive: true });
         this.notesList.addEventListener('touchmove', (e) => this.handleNoteSwipeMove(e));
-        this.notesList.addEventListener('touchend', (e) => this.handleNoteSwipeEnd(e));
+        this.notesList.addEventListener('touchend', (e) => this.handleNoteSwipeEnd(e), { passive: true });
+
+        // Add detail view swipe handling
+        if (this.detailView) {
+            this.detailView.addEventListener('touchstart', (e) => this.handleDetailSwipeStart(e), { passive: true });
+            this.detailView.addEventListener('touchmove', (e) => this.handleDetailSwipeMove(e));
+            this.detailView.addEventListener('touchend', (e) => this.handleDetailSwipeEnd(e), { passive: true });
+        }
     }
 
     handleNoteSwipeStart(e) {
@@ -63,6 +74,45 @@ export class TouchManager {
             setTimeout(() => this.onDeleteNote(noteId), 200);
         } else {
             noteItem.style.transform = '';
+        }
+
+        this.resetSwipe();
+    }
+
+    handleDetailSwipeStart(e) {
+        this.swipeStartX = e.touches[0].clientX;
+        this.swipeStartY = e.touches[0].clientY;
+    }
+
+    handleDetailSwipeMove(e) {
+        if (!this.swipeStartX) return;
+
+        const touchX = e.touches[0].clientX;
+        const touchY = e.touches[0].clientY;
+        const deltaX = touchX - this.swipeStartX;
+        const deltaY = Math.abs(touchY - this.swipeStartY);
+
+        if (deltaY > Math.abs(deltaX)) {
+            this.resetSwipe();
+            return;
+        }
+
+        if (deltaX < 0) return;
+
+        e.preventDefault();
+        this.detailView.style.transform = `translateX(${deltaX}px)`;
+    }
+
+    handleDetailSwipeEnd(e) {
+        if (!this.swipeStartX) return;
+
+        const touchX = e.changedTouches[0].clientX;
+        const deltaX = touchX - this.swipeStartX;
+
+        if (deltaX > 100) {
+            this.onSwipeBack();
+        } else {
+            this.detailView.style.transform = '';
         }
 
         this.resetSwipe();
