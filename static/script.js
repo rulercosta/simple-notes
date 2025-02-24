@@ -398,51 +398,106 @@ class NotesApp {
     }
 
     applyTextSize(size) {
-        const sizeClasses = ['text-xs', 'text-sm', 'text-md', 'text-lg', 'text-xl', 'text-2xl'];
-        this.editor.classList.remove(...sizeClasses);
-        if (size) {
-            this.editor.classList.add(`text-${size}`);
-        }
+        // Remove the line that removes classes from editor
+        // Instead, wrap selected text in a span with the appropriate class
         
-        // Update toolbar button states
-        const buttons = document.querySelectorAll('.toolbar-size-btn');
-        buttons.forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.getAttribute('onclick').includes(size)) {
-                btn.classList.add('active');
-            }
+        if (!this.isEditing) return;
+        
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+        
+        const range = selection.getRangeAt(0);
+        
+        if (range.collapsed) return; // No text selected
+        
+        // Create span with the new size class
+        const span = document.createElement('span');
+        span.classList.add(`text-${size}`);
+        
+        // Extract the selected content
+        const fragment = range.extractContents();
+        
+        // Remove any existing text-* classes from child elements
+        const elements = fragment.querySelectorAll('[class*="text-"]');
+        elements.forEach(el => {
+            const classes = Array.from(el.classList);
+            classes.forEach(cls => {
+                if (cls.startsWith('text-')) {
+                    el.classList.remove(cls);
+                }
+            });
         });
+        
+        // Add the content to the span
+        span.appendChild(fragment);
+        
+        // Insert the span
+        range.insertNode(span);
+        
+        // Restore selection
+        selection.removeAllRanges();
+        const newRange = document.createRange();
+        newRange.selectNodeContents(span);
+        selection.addRange(newRange);
+        
+        this.saveNoteContent();
     }
 
     increaseTextSize() {
         if (!this.activeNoteId || !this.isEditing) return;
         
-        const noteIndex = this.notes.findIndex(n => n.id === this.activeNoteId);
-        if (noteIndex === -1) return;
-
-        const currentSize = this.notes[noteIndex].textSize;
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+        
+        const range = selection.getRangeAt(0);
+        if (range.collapsed) return; // No text selected
+        
+        // Find the current size of the selection
+        let currentSize = 'md'; // default size
+        const node = range.commonAncestorContainer;
+        const sizeSpan = node.nodeType === 1 ? node : node.parentElement;
+        
+        if (sizeSpan) {
+            const sizeClass = Array.from(sizeSpan.classList || [])
+                .find(cls => cls.startsWith('text-'));
+            if (sizeClass) {
+                currentSize = sizeClass.replace('text-', '');
+            }
+        }
+        
         const currentIndex = this.textSizes.indexOf(currentSize);
         if (currentIndex < this.textSizes.length - 1) {
             const newSize = this.textSizes[currentIndex + 1];
-            this.notes[noteIndex].textSize = newSize;
             this.applyTextSize(newSize);
-            this.saveNotes();
         }
     }
 
     decreaseTextSize() {
         if (!this.activeNoteId || !this.isEditing) return;
         
-        const noteIndex = this.notes.findIndex(n => n.id === this.activeNoteId);
-        if (noteIndex === -1) return;
-
-        const currentSize = this.notes[noteIndex].textSize;
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+        
+        const range = selection.getRangeAt(0);
+        if (range.collapsed) return; // No text selected
+        
+        // Find the current size of the selection
+        let currentSize = 'md'; // default size
+        const node = range.commonAncestorContainer;
+        const sizeSpan = node.nodeType === 1 ? node : node.parentElement;
+        
+        if (sizeSpan) {
+            const sizeClass = Array.from(sizeSpan.classList || [])
+                .find(cls => cls.startsWith('text-'));
+            if (sizeClass) {
+                currentSize = sizeClass.replace('text-', '');
+            }
+        }
+        
         const currentIndex = this.textSizes.indexOf(currentSize);
         if (currentIndex > 0) {
             const newSize = this.textSizes[currentIndex - 1];
-            this.notes[noteIndex].textSize = newSize;
             this.applyTextSize(newSize);
-            this.saveNotes();
         }
     }
 
