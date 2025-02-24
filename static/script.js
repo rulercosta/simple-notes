@@ -15,9 +15,9 @@ class NotesApp {
         // Initialize managers
         this.editorManager = new EditorManager(this.editor);
         this.touchManager = new TouchManager(
-            this.detailView,
+            null, // Remove detailView parameter
             this.notesList,
-            () => this.showListView(),
+            null, // Remove onSwipeBack parameter
             (noteId) => this.deleteNote(noteId)
         );
 
