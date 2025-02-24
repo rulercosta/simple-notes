@@ -141,9 +141,18 @@ class NotesApp {
         if (!this.activeNoteId) return;
 
         const title = this.titleInput.value.trim();
-        if (!title) return;
-
         const content = this.editor.innerHTML;
+
+        if (!title) {
+            // If title is empty, update the UI but don't persist
+            const note = this.noteService.getNote(this.activeNoteId);
+            if (note) {
+                note.content = content;
+                this.renderNotesList();
+            }
+            return;
+        }
+
         this.noteService.updateNote(this.activeNoteId, title, content);
         this.renderNotesList();
     }
@@ -184,6 +193,14 @@ class NotesApp {
         this.isEditing = false;
         this.editor.setAttribute('contenteditable', 'false');
         this.modeToggleBtn.innerHTML = '<span class="material-icons">edit</span>';
+        
+        // Remove notes with empty titles when leaving detail view
+        const currentNote = this.noteService.getNote(this.activeNoteId);
+        if (currentNote && !currentNote.title.trim()) {
+            this.noteService.deleteNote(this.activeNoteId);
+            this.renderNotesList();
+        }
+        
         setTimeout(() => {
             this.activeNoteId = null;
         }, 300);
