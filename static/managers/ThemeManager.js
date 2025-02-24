@@ -8,11 +8,23 @@ export class ThemeManager {
         this.init();
     }
 
+    static initializeTheme() {
+        const storage = new StorageManager();
+        const isDarkMode = storage.getDarkMode();
+        if (isDarkMode) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+        document.body.classList.remove('theme-pending');
+    }
+
     init() {
         const isDarkMode = this.storage.getDarkMode();
         if (isDarkMode) {
             this.enableDarkMode();
         }
+
+        // Update icon based on current theme
+        this.updateIcon(isDarkMode);
 
         if (this.darkModeBtn) {
             this.darkModeBtn.addEventListener('click', () => this.toggle());
@@ -42,5 +54,11 @@ export class ThemeManager {
             this.darkModeIcon.textContent = 'light_mode';
         }
         this.storage.setDarkMode(false);
+    }
+
+    updateIcon(isDarkMode) {
+        if (this.darkModeIcon) {
+            this.darkModeIcon.textContent = isDarkMode ? 'dark_mode' : 'light_mode';
+        }
     }
 }
