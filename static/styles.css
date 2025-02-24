@@ -327,8 +327,8 @@ body {
     -webkit-backdrop-filter: blur(20px);
     display: flex;
     align-items: center;
-    justify-content: space-between;  /* Distribute space between items */
-    gap: 4px;
+    justify-content: space-between;
+    gap: 6px;  /* Slightly increased gap since we removed separators */
     opacity: 0;
     height: 0;
     overflow: hidden;
@@ -373,14 +373,6 @@ body {
 .toolbar-btn:disabled {
     opacity: 0.5;
     pointer-events: none;
-}
-
-.toolbar-separator {
-    width: 1px;
-    height: 24px;
-    background-color: var(--border-color);
-    margin: 0;
-    flex: 0.2;  /* Separators take less space */
 }
 
 .editor-container {
@@ -553,10 +545,6 @@ body {
         height: 28px;  /* Smaller height */
         padding: 4px;  /* Smaller padding */
         font-size: 14px;  /* Smaller font */
-    }
-
-    .toolbar-separator {
-        margin: 0 1px;  /* Smaller margin */
     }
 }
 
