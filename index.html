@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>Notes App</title>
     <link rel="stylesheet" href="./static/styles.css">
 </head>
@@ -11,8 +12,26 @@
         <!-- List View -->
         <div class="view list-view active">
             <div class="header">
-                <h1 class="header-title">Notes</h1>
-                <button class="btn" id="new-note-btn">+</button>
+                <div class="header-left">
+                    <button class="dark-mode-switch" id="dark-mode-switch"></button>
+                </div>
+                <div class="header-center">
+                    <h1 class="header-title">Notes</h1>
+                </div>
+                <div class="header-right">
+                    <button class="btn compose-btn" id="new-note-btn">
+                        <span class="material-icons">edit_note</span>
+                    </button>
+                </div>
+            </div>
+            <div class="search-bar">
+                <div class="search-input-wrapper">
+                    <span class="material-icons search-icon">search</span>
+                    <input type="text" id="search-input" placeholder="Search">
+                    <button class="clear-search-btn" id="clear-search-btn">
+                        <span class="material-icons">cancel</span>
+                    </button>
+                </div>
             </div>
             <div class="notes-list" id="notes-list"></div>
         </div>
@@ -22,7 +41,9 @@
             <div class="header">
                 <button class="btn back-btn" id="back-btn">Notes</button>
                 <div class="header-actions">
-                    <button class="btn" id="mode-toggle-btn">Edit</button>
+                    <button class="btn" id="mode-toggle-btn">
+                        <span class="material-icons">edit</span>
+                    </button>
                 </div>
             </div>
             <div class="toolbar">
@@ -31,8 +52,14 @@
                 <button class="toolbar-btn" onclick="formatText('underline')"><u>U</u></button>
                 <button class="toolbar-btn" onclick="formatList('insertUnorderedList')">•</button>
                 <button class="toolbar-btn" onclick="formatList('insertOrderedList')">1.</button>
+                <div class="toolbar-separator"></div>
+                <button class="toolbar-btn toolbar-size-btn" onclick="app.decreaseTextSize()">A⁻</button>
+                <button class="toolbar-btn toolbar-size-btn" onclick="app.increaseTextSize()">A⁺</button>
             </div>
-            <div class="editor" contenteditable="false" id="editor"></div>
+            <div class="editor-container">
+                <input type="text" class="note-title-input" id="note-title" placeholder="Enter note title" readonly>
+                <div class="editor" contenteditable="false" id="editor"></div>
+            </div>
         </div>
     </div>
     <script src="./static/script.js"></script>
