@@ -81,6 +81,17 @@ class NotesApp {
         this.loadNotes(); // Replace this.renderNotesList()
         this.initializeDarkMode();
         this.setupUndoRedoTracking();
+
+        // Reset alignment when entering edit mode
+        this.modeToggleBtn.addEventListener('click', () => {
+            if (this.isEditing) {
+                const alignButton = document.getElementById('align-toggle-btn');
+                if (alignButton) {
+                    alignButton.querySelector('.material-icons').textContent = 'format_align_left';
+                    currentAlignment = 'left';
+                }
+            }
+        });
     }
 
     handleEditorKeydown(e) {
@@ -794,6 +805,33 @@ function toggleList() {
             document.execCommand('insertOrderedList', false, null);
             button.textContent = '¶';
             currentListType = 'none';
+            break;
+    }
+}
+
+let currentAlignment = 'left';
+
+function toggleAlignment() {
+    const button = document.getElementById('align-toggle-btn');
+    const icon = button.querySelector('.material-icons');
+    
+    switch (currentAlignment) {
+        case 'left':
+            document.execCommand('justifyCenter');
+            icon.textContent = 'format_align_center';
+            currentAlignment = 'center';
+            break;
+        
+        case 'center':
+            document.execCommand('justifyRight');
+            icon.textContent = 'format_align_right';
+            currentAlignment = 'right';
+            break;
+            
+        case 'right':
+            document.execCommand('justifyLeft');
+            icon.textContent = 'format_align_left';
+            currentAlignment = 'left';
             break;
     }
 }
