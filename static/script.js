@@ -173,9 +173,11 @@ class NotesApp {
     }
 
     deleteNote(noteId, event) {
-        if (!(event instanceof Event)) {
+        // Remove the Event instance check and make event optional
+        if (event) {
             event.stopPropagation();
         }
+        
         const noteIndex = this.notes.findIndex(n => n.id === noteId);
         if (noteIndex !== -1) {
             this.notes.splice(noteIndex, 1);
@@ -260,6 +262,7 @@ class NotesApp {
         this.notes.forEach(note => {
             const noteElement = document.createElement('div');
             noteElement.className = 'note-item';
+            noteElement.dataset.noteId = note.id;  // Add this line
             noteElement.innerHTML = `
                 <div class="note-title">${note.title}</div>
                 <div class="note-preview">${this.getPreview(note.content)}</div>
@@ -278,6 +281,33 @@ class NotesApp {
                 <p>Tap + to create your first note</p>
             </div>
         `;
+    }
+
+    renderFilteredNotes(filteredNotes) {
+        this.notesList.innerHTML = '';
+        if (filteredNotes.length === 0) {
+            this.notesList.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔍</div>
+                    <h2>No Results</h2>
+                    <p>No notes match your search</p>
+                </div>
+            `;
+            return;
+        }
+
+        filteredNotes.forEach(note => {
+            const noteElement = document.createElement('div');
+            noteElement.className = 'note-item';
+            noteElement.dataset.noteId = note.id;  // Add this line
+            noteElement.innerHTML = `
+                <div class="note-title">${note.title}</div>
+                <div class="note-preview">${this.getPreview(note.content)}</div>
+                <div class="note-meta">Modified ${this.formatDate(note.modifiedAt)}</div>
+            `;
+            noteElement.addEventListener('click', () => this.setActiveNote(note.id));
+            this.notesList.appendChild(noteElement);
+        });
     }
 
     // Text formatting
@@ -466,6 +496,7 @@ class NotesApp {
         filteredNotes.forEach(note => {
             const noteElement = document.createElement('div');
             noteElement.className = 'note-item';
+            noteElement.dataset.noteId = note.id;  // Add this line
             noteElement.innerHTML = `
                 <div class="note-title">${note.title}</div>
                 <div class="note-preview">${this.getPreview(note.content)}</div>
