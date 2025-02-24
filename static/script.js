@@ -771,8 +771,31 @@ function formatText(command) {
     document.execCommand(command, false, null);
 }
 
-function formatList(command) {
-    document.execCommand(command, false, null);
+let currentListType = 'none'; // Keep as 'none' for default paragraph mode
+
+function toggleList() {
+    const button = document.getElementById('list-toggle-btn');
+    
+    switch (currentListType) {
+        case 'none':
+            document.execCommand('insertUnorderedList', false, null);
+            button.textContent = '•';
+            currentListType = 'bullet';
+            break;
+        
+        case 'bullet':
+            document.execCommand('insertOrderedList', false, null);
+            button.textContent = '1.';
+            currentListType = 'number';
+            break;
+            
+        case 'number':
+            // Remove any active list by executing the current list type command again
+            document.execCommand('insertOrderedList', false, null);
+            button.textContent = '¶';
+            currentListType = 'none';
+            break;
+    }
 }
 
 // Initialize the app
