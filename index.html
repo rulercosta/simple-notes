@@ -49,10 +49,10 @@
                 </div>
             </div>
             <div class="toolbar">
-                <button class="toolbar-btn" onclick="app.undo()">
+                <button class="toolbar-btn" onclick="window.app.undo()">
                     <span class="material-icons">undo</span>
                 </button>
-                <button class="toolbar-btn" onclick="app.redo()">
+                <button class="toolbar-btn" onclick="window.app.redo()">
                     <span class="material-icons">redo</span>
                 </button>
                 <button class="toolbar-btn" onclick="formatText('bold')"><b>B</b></button>
@@ -71,6 +71,6 @@
             </div>
         </div>
     </div>
-    <script src="./static/script.js"></script>
+    <script type="module" src="static/script.js"></script>
 </body>
 </html>
