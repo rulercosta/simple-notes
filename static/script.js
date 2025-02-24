@@ -1,44 +1,61 @@
-import { Note } from './components/Note.js';
+import { NoteService } from './services/NoteService.js';
+import { ViewManager } from './managers/ViewManager.js';
+import { ThemeManager } from './managers/ThemeManager.js';
+import { SearchManager } from './managers/SearchManager.js';
 import { EditorManager, formatText, toggleList, toggleAlignment } from './components/EditorManager.js';
 import { TouchManager } from './components/TouchManager.js';
+import { Note } from './components/Note.js';
 
 class NotesApp {
     constructor() {
-        this.notes = [];
-        this.activeNoteId = null;
-        this.isEditing = false;
-        this.textSizes = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-
+        this.noteService = new NoteService();
+        this.viewManager = new ViewManager();
+        this.themeManager = new ThemeManager();
+        
+        // Text sizes array
+        this.textSizes = ['xs', 'sm', 'md', 'lg', 'xl'];
+        
         // Initialize DOM elements
         this.initializeDOMElements();
         
         // Initialize managers
         this.editorManager = new EditorManager(this.editor);
         this.touchManager = new TouchManager(
-            null, // Remove detailView parameter
-            this.notesList,
-            null, // Remove onSwipeBack parameter
-            (noteId) => this.deleteNote(noteId)
+            this.detailView,  // Pass detailView
+            this.notesList,   // Pass notesList element
+            () => this.showListView(),  // Pass swipeBack callback
+            (noteId) => this.deleteNote(noteId)  // Pass delete callback
+        );
+        this.searchManager = new SearchManager(
+            this.noteService,
+            (notes) => this.renderNotesList(notes)
         );
 
         // Set up event listeners
         this.setupEventListeners();
 
-        // Bind methods that need 'this' context
-        this.saveNotes = this.saveNotes.bind(this);
-        this.setActiveNote = this.setActiveNote.bind(this);
-        this.saveNoteContent = this.saveNoteContent.bind(this);
-        this.applyTextSize = this.applyTextSize.bind(this);
-        this.increaseTextSize = this.increaseTextSize.bind(this);
-        this.decreaseTextSize = this.decreaseTextSize.bind(this);
+        // Initial render
+        this.renderNotesList();
 
-        // Bind the undo/redo methods from editorManager to the app instance
-        this.undo = this.editorManager.undo.bind(this.editorManager);
-        this.redo = this.editorManager.redo.bind(this.editorManager);
-
-        // Initialize app state
-        this.loadNotes();
-        this.initializeDarkMode();
+        // Add toolbar event delegation
+        this.toolbar = document.querySelector('.toolbar');
+        this.toolbar.addEventListener('click', (e) => {
+            const button = e.target.closest('[data-action]');
+            if (!button) return;
+            
+            const action = button.dataset.action;
+            switch (action) {
+                case 'undo': this.undo(); break;
+                case 'redo': this.redo(); break;
+                case 'bold': formatText('bold'); break;
+                case 'italic': formatText('italic'); break;
+                case 'underline': formatText('underline'); break;
+                case 'list': toggleList(); break;
+                case 'align': toggleAlignment(); break;
+                case 'decrease-size': this.decreaseTextSize(); break;
+                case 'increase-size': this.increaseTextSize(); break;
+            }
+        });
     }
 
     initializeDOMElements() {
@@ -109,34 +126,14 @@ class NotesApp {
         }
     }
 
-    loadNotes() {
-        try {
-            const savedNotes = localStorage.getItem('notes');
-            if (savedNotes) {
-                this.notes = JSON.parse(savedNotes).map(note => new Note(
-                    note.id,
-                    note.title,
-                    note.content,
-                    note.createdAt,
-                    note.modifiedAt,
-                    note.textSize
-                ));
-            }
-        } catch (error) {
-            console.error('Error loading notes:', error);
-            this.notes = [];
-        }
-        this.renderNotesList();
-    }
-
     // Core note operations
     createNewNote() {
-        this.activeNoteId = 'temp-' + Date.now().toString();
+        const newNote = this.noteService.createNote('', '');
+        this.activeNoteId = newNote.id;
         this.showDetailView();
         this.toggleEditMode();
         this.titleInput.value = '';
         this.editor.innerHTML = '';
-        this.applyTextSize('md');  // Set default size to medium
         this.titleInput.focus();
     }
 
@@ -144,44 +141,19 @@ class NotesApp {
         if (!this.activeNoteId) return;
 
         const title = this.titleInput.value.trim();
-        if (!title) return; // Don't save if there's no title
+        if (!title) return;
 
-        if (this.activeNoteId.startsWith('temp-')) {
-            // This is a new note that hasn't been saved yet
-            const newNote = new Note(
-                Date.now().toString(),
-                title,
-                this.editor.innerHTML,
-                undefined,
-                undefined,
-                'normal'
-            );
-            this.notes.unshift(newNote);
-            this.activeNoteId = newNote.id;
-        } else {
-            // Existing note
-            const noteIndex = this.notes.findIndex(n => n.id === this.activeNoteId);
-            if (noteIndex !== -1) {
-                this.notes[noteIndex].title = title;
-                this.notes[noteIndex].content = this.editor.innerHTML;
-                this.notes[noteIndex].modifiedAt = new Date().toISOString();
-            }
-        }
-        
-        this.saveNotes();
+        const content = this.editor.innerHTML;
+        this.noteService.updateNote(this.activeNoteId, title, content);
         this.renderNotesList();
     }
 
     deleteNote(noteId, event) {
-        // Remove the Event instance check and make event optional
         if (event) {
             event.stopPropagation();
         }
         
-        const noteIndex = this.notes.findIndex(n => n.id === noteId);
-        if (noteIndex !== -1) {
-            this.notes.splice(noteIndex, 1);
-            this.saveNotes();
+        if (this.noteService.deleteNote(noteId)) {
             if (this.activeNoteId === noteId) {
                 this.showListView();
             }
@@ -189,17 +161,9 @@ class NotesApp {
         }
     }
 
-    saveNotes() {
-        try {
-            localStorage.setItem('notes', JSON.stringify(this.notes));
-        } catch (error) {
-            console.error('Error saving notes:', error);
-        }
-    }
-
     setActiveNote(noteId) {
         this.activeNoteId = noteId;
-        const note = this.notes.find(n => n.id === noteId);
+        const note = this.noteService.getNote(noteId);
         if (note) {
             this.titleInput.value = note.title;
             this.editor.innerHTML = note.content;
@@ -253,16 +217,17 @@ class NotesApp {
 
     // UI rendering
     renderNotesList() {
+        const notes = this.noteService.notes;
         this.notesList.innerHTML = '';
-        if (this.notes.length === 0) {
+        if (notes.length === 0) {
             this.renderEmptyState();
             return;
         }
 
-        this.notes.forEach(note => {
+        notes.forEach(note => {
             const noteElement = document.createElement('div');
             noteElement.className = 'note-item';
-            noteElement.dataset.noteId = note.id;  // Add this line
+            noteElement.dataset.noteId = note.id;
             noteElement.innerHTML = `
                 <div class="note-title">${note.title}</div>
                 <div class="note-preview">${this.getPreview(note.content)}</div>
@@ -465,7 +430,7 @@ class NotesApp {
             return;
         }
 
-        const filteredNotes = this.notes.filter(note => 
+        const filteredNotes = this.noteService.notes.filter(note => 
             note.title.toLowerCase().includes(searchTerm) ||
             this.getPreview(note.content).toLowerCase().includes(searchTerm)
         );
@@ -506,13 +471,28 @@ class NotesApp {
             this.notesList.appendChild(noteElement);
         });
     }
+
+    // Undo/Redo integration
+    undo() {
+        if (this.editorManager) {
+            this.editorManager.undo();
+            this.saveNoteContent();
+        }
+    }
+
+    redo() {
+        if (this.editorManager) {
+            this.editorManager.redo();
+            this.saveNoteContent();
+        }
+    }
 }
 
 // Initialize the app
 const app = new NotesApp();
 
 // Export for global access
+window.app = app;
 window.formatText = formatText;
 window.toggleList = toggleList;
 window.toggleAlignment = toggleAlignment;
-window.app = app; // Export app instance for toolbar buttons
