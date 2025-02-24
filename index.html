@@ -49,21 +49,21 @@
                 </div>
             </div>
             <div class="toolbar">
-                <button class="toolbar-btn" onclick="window.app.undo()">
+                <button class="toolbar-btn" data-action="undo">
                     <span class="material-icons">undo</span>
                 </button>
-                <button class="toolbar-btn" onclick="window.app.redo()">
+                <button class="toolbar-btn" data-action="redo">
                     <span class="material-icons">redo</span>
                 </button>
-                <button class="toolbar-btn" onclick="formatText('bold')"><b>B</b></button>
-                <button class="toolbar-btn" onclick="formatText('italic')"><i>I</i></button>
-                <button class="toolbar-btn" onclick="formatText('underline')"><u>U</u></button>
-                <button class="toolbar-btn" id="list-toggle-btn" onclick="toggleList()">¶</button>
-                <button class="toolbar-btn" id="align-toggle-btn" onclick="toggleAlignment()">
+                <button class="toolbar-btn" data-action="bold"><b>B</b></button>
+                <button class="toolbar-btn" data-action="italic"><i>I</i></button>
+                <button class="toolbar-btn" data-action="underline"><u>U</u></button>
+                <button class="toolbar-btn" data-action="list" id="list-toggle-btn">¶</button>
+                <button class="toolbar-btn" data-action="align" id="align-toggle-btn">
                     <span class="material-icons">format_align_left</span>
                 </button>
-                <button class="toolbar-btn toolbar-size-btn" onclick="app.decreaseTextSize()">A⁻</button>
-                <button class="toolbar-btn toolbar-size-btn" onclick="app.increaseTextSize()">A⁺</button>
+                <button class="toolbar-btn toolbar-size-btn" data-action="decrease-size">A⁻</button>
+                <button class="toolbar-btn toolbar-size-btn" data-action="increase-size">A⁺</button>
             </div>
             <div class="editor-container">
                 <input type="text" class="note-title-input" id="note-title" placeholder="Title" readonly>
