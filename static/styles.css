@@ -213,6 +213,17 @@ body {
     transition: none;
 }
 
+/* Remove the persistent hover state for touch devices */
+@media (hover: none) {
+    .btn:hover {
+        background-color: transparent;
+    }
+    
+    .toolbar-btn:hover {
+        background-color: transparent;
+    }
+}
+
 .back-btn {
     display: flex;
     align-items: center;
@@ -336,6 +347,8 @@ body {
 
 .toolbar-btn:active {
     background-color: rgba(0, 122, 255, 0.2);
+    opacity: 0.5;
+    transition: none;
 }
 
 .toolbar-btn:disabled {
