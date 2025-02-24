@@ -11,6 +11,13 @@ export class EditorManager {
         this.undo = this.undo.bind(this);
         this.redo = this.redo.bind(this);
         this.pushToUndoStack = this.pushToUndoStack.bind(this);
+
+        this.listButton = document.querySelector('[data-action="list"]');
+        this.alignButton = document.querySelector('[data-action="align"]');
+        this.listStates = ['none', 'bullet', 'number'];
+        this.alignStates = ['left', 'center', 'right'];
+        this.currentListState = 'none';
+        this.currentAlignState = 'left';
     }
 
     setupUndoRedoTracking() {
@@ -204,35 +211,53 @@ export function formatText(command) {
 }
 
 export function toggleList() {
-    switch (currentListType) {
+    const listButton = document.querySelector('[data-action="list"]');
+    const currentState = listButton.getAttribute('data-state') || 'none';
+    let newState;
+    
+    switch (currentState) {
         case 'none':
             document.execCommand('insertUnorderedList', false, null);
-            currentListType = 'bullet';
+            newState = 'bullet';
+            listButton.innerHTML = '•';
             break;
         case 'bullet':
             document.execCommand('insertOrderedList', false, null);
-            currentListType = 'number';
+            newState = 'number';
+            listButton.innerHTML = '1.';
             break;
         case 'number':
-            document.execCommand('insertOrderedList', false, null);
-            currentListType = 'none';
+            document.execCommand('insertOrderedList', false, null); // This removes the list
+            newState = 'none';
+            listButton.innerHTML = '¶';
             break;
     }
+    
+    listButton.setAttribute('data-state', newState);
 }
 
 export function toggleAlignment() {
-    switch (currentAlignment) {
+    const alignButton = document.querySelector('[data-action="align"]');
+    const currentState = alignButton.getAttribute('data-state') || 'left';
+    let newState;
+    
+    switch (currentState) {
         case 'left':
             document.execCommand('justifyCenter');
-            currentAlignment = 'center';
+            newState = 'center';
+            alignButton.innerHTML = '<span class="material-icons">format_align_center</span>';
             break;
         case 'center':
             document.execCommand('justifyRight');
-            currentAlignment = 'right';
+            newState = 'right';
+            alignButton.innerHTML = '<span class="material-icons">format_align_right</span>';
             break;
         case 'right':
             document.execCommand('justifyLeft');
-            currentAlignment = 'left';
+            newState = 'left';
+            alignButton.innerHTML = '<span class="material-icons">format_align_left</span>';
             break;
     }
+    
+    alignButton.setAttribute('data-state', newState);
 }
