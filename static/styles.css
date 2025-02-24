@@ -320,13 +320,15 @@ body {
 }
 
 .toolbar {
-    padding: 8px 16px;
+    padding: 8px 12px;
     border-bottom: 0.5px solid var(--border-color);
     background: var(--toolbar-background);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     display: flex;
-    gap: 8px;
+    align-items: center;
+    justify-content: space-between;  /* Distribute space between items */
+    gap: 4px;
     opacity: 0;
     height: 0;
     overflow: hidden;
@@ -339,17 +341,24 @@ body {
 .toolbar.visible {
     opacity: 1;
     height: auto;
+    min-height: 52px;  /* Ensure consistent height */
 }
 
 .toolbar-btn {
-    background: none;
+    flex: 1;  /* Each button takes equal space */
+    min-width: 36px;  /* Slightly increased for better touch targets */
+    height: 36px;  /* Slightly increased for better touch targets */
+    padding: 6px;  /* Reduced padding */
     border: none;
+    border-radius: 6px;
+    background: none;
+    color: #007AFF;
     font-size: 15px;
     font-weight: 500;
-    color: #007AFF;
-    padding: 6px 12px;
-    border-radius: 8px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: background-color 0.2s;
 }
 
@@ -361,15 +370,17 @@ body {
     background-color: rgba(0, 122, 255, 0.2);
 }
 
-/* Update toolbar button styles */
-.toolbar-btn .material-icons {
-    font-size: 20px;
-    line-height: 1;
-}
-
 .toolbar-btn:disabled {
     opacity: 0.5;
     pointer-events: none;
+}
+
+.toolbar-separator {
+    width: 1px;
+    height: 24px;
+    background-color: var(--border-color);
+    margin: 0;
+    flex: 0.2;  /* Separators take less space */
 }
 
 .editor-container {
@@ -477,26 +488,6 @@ body {
     line-height: 1.6;
 }
 
-/* Update toolbar size button styles */
-.toolbar-size-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 36px;
-    font-weight: 600;
-}
-
-.toolbar-size-btn.active {
-    background-color: rgba(0, 122, 255, 0.1);
-}
-
-.toolbar-separator {
-    width: 1px;
-    height: 24px;
-    background-color: var(--border-color);
-    margin: 0 4px;
-}
-
 @media (hover: hover) {
     .note-item:hover {
         background-color: var(--hover-background);
@@ -547,6 +538,25 @@ body {
     .notes-list::-webkit-scrollbar,
     .editor-container::-webkit-scrollbar {
         display: none;
+    }
+}
+
+/* Add responsive toolbar styles */
+@media (max-width: 360px) {
+    .toolbar {
+        padding: 6px 8px;  /* Even smaller padding on very small screens */
+        gap: 2px;  /* Reduce gap further */
+    }
+
+    .toolbar-btn {
+        min-width: 28px;  /* Smaller minimum width */
+        height: 28px;  /* Smaller height */
+        padding: 4px;  /* Smaller padding */
+        font-size: 14px;  /* Smaller font */
+    }
+
+    .toolbar-separator {
+        margin: 0 1px;  /* Smaller margin */
     }
 }
 
