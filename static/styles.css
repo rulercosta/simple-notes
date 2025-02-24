@@ -108,38 +108,6 @@ body {
     justify-self: end;
 }
 
-.dark-mode-switch {
-    width: 51px;
-    height: 31px;
-    background-color: #e9e9eb;
-    border-radius: 16px;
-    position: relative;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    border: none;
-}
-
-.dark-mode-switch::before {
-    content: "";
-    position: absolute;
-    width: 27px;
-    height: 27px;
-    border-radius: 50%;
-    background-color: white;
-    top: 2px;
-    left: 2px;
-    transition: transform 0.3s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.dark-mode-switch.active {
-    background-color: #34c759;
-}
-
-.dark-mode-switch.active::before {
-    transform: translateX(20px);
-}
-
 .header-title {
     font-size: 34px;
     font-weight: 700;
