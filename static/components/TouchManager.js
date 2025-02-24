@@ -111,7 +111,7 @@ export class TouchManager {
         this.currentSwipeItem.style.transform = `translateX(${deltaX}px)`;
     }
 
-    handleNoteSwipeEnd(e) {
+    handleNoteSwipeEnd() {
         if (!this.currentSwipeItem) return;
 
         const noteItem = this.currentSwipeItem;
@@ -121,7 +121,7 @@ export class TouchManager {
 
         if (translateX <= this.swipeThreshold) {
             noteItem.classList.add('deleting');
-            const noteId = Array.from(this.notesList.children).indexOf(noteItem);
+            const noteId = noteItem.dataset.noteId;
             setTimeout(() => this.onDeleteNote(noteId), 200);
         } else {
             noteItem.style.transform = '';
