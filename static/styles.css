@@ -480,6 +480,22 @@ body {
     line-height: 1.6;
 }
 
+#align-toggle-btn .material-icons {
+    font-size: 20px;
+}
+
+.editor [style*="text-align: left"] {
+    text-align: left !important;
+}
+
+.editor [style*="text-align: center"] {
+    text-align: center !important;
+}
+
+.editor [style*="text-align: right"] {
+    text-align: right !important;
+}
+
 @media (hover: hover) {
     .note-item:hover {
         background-color: var(--hover-background);
