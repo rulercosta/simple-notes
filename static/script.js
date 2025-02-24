@@ -128,6 +128,9 @@ class NotesApp {
 
     // Core note operations
     createNewNote() {
+        const composeBtn = document.getElementById('new-note-btn');
+        composeBtn.classList.add('active');
+        
         const newNote = this.noteService.createNote('', '');
         this.activeNoteId = newNote.id;
         this.showDetailView();
@@ -192,7 +195,13 @@ class NotesApp {
         this.detailView.classList.add('inactive');
         this.isEditing = false;
         this.editor.setAttribute('contenteditable', 'false');
+        this.titleInput.readOnly = true;
+        this.toolbar.classList.remove('visible');
         this.modeToggleBtn.innerHTML = '<span class="material-icons">edit</span>';
+        
+        // Reset compose button state
+        const composeBtn = document.getElementById('new-note-btn');
+        composeBtn.classList.remove('active');
         
         // Remove notes with empty titles when leaving detail view
         const currentNote = this.noteService.getNote(this.activeNoteId);
@@ -201,9 +210,11 @@ class NotesApp {
             this.renderNotesList();
         }
         
-        setTimeout(() => {
-            this.activeNoteId = null;
-        }, 300);
+        // Clear active note and editor state
+        this.activeNoteId = null;
+        this.editor.blur();
+        this.titleInput.blur();
+        
         this.detailView.style.transform = '';  // Reset transform
         if (this.isAndroid) {
             this.detailView.style.opacity = '';
