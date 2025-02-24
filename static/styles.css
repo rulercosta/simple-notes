@@ -578,3 +578,11 @@ body {
     font-size: 28px;  /* Increased from 20px */
     color: #007AFF;
 }
+
+.compose-btn.active {
+    background-color: var(--active-background);
+}
+
+.compose-btn:active {
+    background-color: var(--active-background);
+}
