@@ -204,49 +204,34 @@ export function formatText(command) {
 }
 
 export function toggleList() {
-    const button = document.getElementById('list-toggle-btn');
-    
     switch (currentListType) {
         case 'none':
             document.execCommand('insertUnorderedList', false, null);
-            button.textContent = '•';
             currentListType = 'bullet';
             break;
-        
         case 'bullet':
             document.execCommand('insertOrderedList', false, null);
-            button.textContent = '1.';
             currentListType = 'number';
             break;
-            
         case 'number':
             document.execCommand('insertOrderedList', false, null);
-            button.textContent = '¶';
             currentListType = 'none';
             break;
     }
 }
 
 export function toggleAlignment() {
-    const button = document.getElementById('align-toggle-btn');
-    const icon = button.querySelector('.material-icons');
-    
     switch (currentAlignment) {
         case 'left':
             document.execCommand('justifyCenter');
-            icon.textContent = 'format_align_center';
             currentAlignment = 'center';
             break;
-        
         case 'center':
             document.execCommand('justifyRight');
-            icon.textContent = 'format_align_right';
             currentAlignment = 'right';
             break;
-            
         case 'right':
             document.execCommand('justifyLeft');
-            icon.textContent = 'format_align_left';
             currentAlignment = 'left';
             break;
     }
