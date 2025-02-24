@@ -270,9 +270,7 @@ class NotesApp {
     renderEmptyState() {
         this.notesList.innerHTML = `
             <div class="empty-state">
-                <div class="empty-state-icon">📝</div>
-                <h2>No Notes</h2>
-                <p>Tap + to create your first note</p>
+                <p>Tap the compose button to create a note.</p>
             </div>
         `;
     }
@@ -282,9 +280,8 @@ class NotesApp {
         if (filteredNotes.length === 0) {
             this.notesList.innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-state-icon">🔍</div>
                     <h2>No Results</h2>
-                    <p>No notes match your search</p>
+                    <p>No notes match your search.</p>
                 </div>
             `;
             return;
@@ -293,7 +290,7 @@ class NotesApp {
         filteredNotes.forEach(note => {
             const noteElement = document.createElement('div');
             noteElement.className = 'note-item';
-            noteElement.dataset.noteId = note.id;  // Add this line
+            noteElement.dataset.noteId = note.id;
             noteElement.innerHTML = `
                 <div class="note-title">${note.title}</div>
                 <div class="note-preview">${this.getPreview(note.content)}</div>
@@ -458,9 +455,8 @@ class NotesApp {
         if (filteredNotes.length === 0) {
             this.notesList.innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-state-icon">🔍</div>
                     <h2>No Results</h2>
-                    <p>No notes match your search</p>
+                    <p>No notes match your search.</p>
                 </div>
             `;
             return;
