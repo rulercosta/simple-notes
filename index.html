@@ -24,68 +24,74 @@
     </script>
 </head>
 <body class="theme-pending">
-    <div class="app-container">
-        <!-- List View -->
-        <div class="view list-view active">
-            <div class="header">
-                <div class="header-left">
-                    <button class="btn" id="dark-mode-btn">
-                        <span class="material-icons">light_mode</span>
-                    </button>
-                </div>
-                <div class="header-center">
-                    <h1 class="header-title">Notes</h1>
-                </div>
-                <div class="header-right">
-                    <button class="btn compose-btn" id="new-note-btn">
-                        <span class="material-icons">edit_note</span>
-                    </button>
-                </div>
-            </div>
-            <div class="search-bar">
-                <div class="search-input-wrapper">
-                    <span class="material-icons search-icon">search</span>
-                    <input type="text" id="search-input" placeholder="Search">
-                    <button class="clear-search-btn" id="clear-search-btn">
-                        <span class="material-icons">cancel</span>
-                    </button>
-                </div>
-            </div>
-            <div class="notes-list" id="notes-list"></div>
-        </div>
+    <!-- Add README container -->
+    <div id="readme-container" style="display: none"></div>
 
-        <!-- Detail View -->
-        <div class="view detail-view">
-            <div class="header">
-                <button class="btn back-btn" id="back-btn">
-                    <span class="material-icons">arrow_back</span>
-                </button>
-                <div class="header-actions">
-                    <button class="btn" id="mode-toggle-btn">
-                        <span class="material-icons">edit</span>
-                    </button>
+    <!-- Wrap existing app container -->
+    <div id="app-container" style="display: none">
+        <div class="app-container">
+            <!-- List View -->
+            <div class="view list-view active">
+                <div class="header">
+                    <div class="header-left">
+                        <button class="btn" id="dark-mode-btn">
+                            <span class="material-icons">light_mode</span>
+                        </button>
+                    </div>
+                    <div class="header-center">
+                        <h1 class="header-title">Notes</h1>
+                    </div>
+                    <div class="header-right">
+                        <button class="btn compose-btn" id="new-note-btn">
+                            <span class="material-icons">edit_note</span>
+                        </button>
+                    </div>
                 </div>
+                <div class="search-bar">
+                    <div class="search-input-wrapper">
+                        <span class="material-icons search-icon">search</span>
+                        <input type="text" id="search-input" placeholder="Search">
+                        <button class="clear-search-btn" id="clear-search-btn">
+                            <span class="material-icons">cancel</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="notes-list" id="notes-list"></div>
             </div>
-            <div class="toolbar">
-                <button class="toolbar-btn" data-action="undo">
-                    <span class="material-icons">undo</span>
-                </button>
-                <button class="toolbar-btn" data-action="redo">
-                    <span class="material-icons">redo</span>
-                </button>
-                <button class="toolbar-btn" data-action="bold"><b>B</b></button>
-                <button class="toolbar-btn" data-action="italic"><i>I</i></button>
-                <button class="toolbar-btn" data-action="underline"><u>U</u></button>
-                <button class="toolbar-btn" data-action="list" id="list-toggle-btn" data-state="none">¶</button>
-                <button class="toolbar-btn" data-action="align" id="align-toggle-btn" data-state="left">
-                    <span class="material-icons">format_align_left</span>
-                </button>
-                <button class="toolbar-btn toolbar-size-btn" data-action="decrease-size">A⁻</button>
-                <button class="toolbar-btn toolbar-size-btn" data-action="increase-size">A⁺</button>
-            </div>
-            <div class="editor-container">
-                <input type="text" class="note-title-input" id="note-title" placeholder="Title" readonly>
-                <div class="editor" contenteditable="false" id="editor"></div>
+
+            <!-- Detail View -->
+            <div class="view detail-view">
+                <div class="header">
+                    <button class="btn back-btn" id="back-btn">
+                        <span class="material-icons">arrow_back</span>
+                    </button>
+                    <div class="header-actions">
+                        <button class="btn" id="mode-toggle-btn">
+                            <span class="material-icons">edit</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="toolbar">
+                    <button class="toolbar-btn" data-action="undo">
+                        <span class="material-icons">undo</span>
+                    </button>
+                    <button class="toolbar-btn" data-action="redo">
+                        <span class="material-icons">redo</span>
+                    </button>
+                    <button class="toolbar-btn" data-action="bold"><b>B</b></button>
+                    <button class="toolbar-btn" data-action="italic"><i>I</i></button>
+                    <button class="toolbar-btn" data-action="underline"><u>U</u></button>
+                    <button class="toolbar-btn" data-action="list" id="list-toggle-btn" data-state="none">¶</button>
+                    <button class="toolbar-btn" data-action="align" id="align-toggle-btn" data-state="left">
+                        <span class="material-icons">format_align_left</span>
+                    </button>
+                    <button class="toolbar-btn toolbar-size-btn" data-action="decrease-size">A⁻</button>
+                    <button class="toolbar-btn toolbar-size-btn" data-action="increase-size">A⁺</button>
+                </div>
+                <div class="editor-container">
+                    <input type="text" class="note-title-input" id="note-title" placeholder="Title" readonly>
+                    <div class="editor" contenteditable="false" id="editor"></div>
+                </div>
             </div>
         </div>
     </div>
