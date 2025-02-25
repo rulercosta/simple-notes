@@ -500,3 +500,21 @@ window.app = app;
 window.formatText = formatText;
 window.toggleList = toggleList;
 window.toggleAlignment = toggleAlignment;
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        const basePath = window.location.pathname.includes('simple-notes') 
+            ? '/simple-notes'
+            : '';
+        
+        navigator.serviceWorker.register(`${basePath}/sw.js`, {
+            scope: `${basePath}/`
+        })
+            .then(registration => {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            })
+            .catch(err => {
+                console.error('ServiceWorker registration failed: ', err);
+            });
+    });
+}
