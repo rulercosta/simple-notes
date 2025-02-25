@@ -20,7 +20,6 @@ export class TouchManager {
         this.notesList.addEventListener('touchmove', (e) => this.handleNoteSwipeMove(e), { passive: false });
         this.notesList.addEventListener('touchend', (e) => this.handleNoteSwipeEnd(e), { passive: true });
 
-        // Add detail view swipe handling
         if (this.detailView) {
             this.detailView.addEventListener('touchstart', (e) => this.handleDetailSwipeStart(e), { passive: true });
             this.detailView.addEventListener('touchmove', (e) => this.handleDetailSwipeMove(e), { passive: false });

@@ -23,7 +23,6 @@ export class ThemeManager {
             this.enableDarkMode();
         }
 
-        // Update icon based on current theme
         this.updateIcon(isDarkMode);
 
         if (this.darkModeBtn) {

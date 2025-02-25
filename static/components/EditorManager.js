@@ -7,7 +7,6 @@ export class EditorManager {
         this.isComposing = false;
         this.setupUndoRedoTracking();
 
-        // Bind methods
         this.undo = this.undo.bind(this);
         this.redo = this.redo.bind(this);
         this.pushToUndoStack = this.pushToUndoStack.bind(this);
@@ -73,14 +72,13 @@ export class EditorManager {
             timestamp: Date.now()
         };
         
-        // Don't push if content hasn't changed
         const lastState = this.undoStack[this.undoStack.length - 1];
         if (lastState && lastState.content === currentState.content) {
             return;
         }
         
         this.undoStack.push(currentState);
-        this.redoStack = []; // Clear redo stack when new changes are made
+        this.redoStack = []; 
         
         if (this.undoStack.length > 1000) {
             this.undoStack.shift();
@@ -154,7 +152,6 @@ export class EditorManager {
                 this.editor.innerHTML = previousState.content;
                 this.restoreSelection(previousState.selection);
                 
-                // Trigger input event to save changes
                 this.editor.dispatchEvent(new Event('input', { bubbles: true }));
             }
         }
@@ -171,7 +168,6 @@ export class EditorManager {
             this.editor.innerHTML = nextState.content;
             this.restoreSelection(nextState.selection);
             
-            // Trigger input event to save changes
             this.editor.dispatchEvent(new Event('input', { bubbles: true }));
         }
 
@@ -180,7 +176,6 @@ export class EditorManager {
 
     updateToolbarState() {
         requestAnimationFrame(() => {
-            // Cache button references to avoid repeated DOM queries
             if (!this._undoBtn || !this._redoBtn) {
                 const toolbarButtons = document.querySelectorAll('.toolbar-btn');
                 for (const btn of toolbarButtons) {
@@ -227,7 +222,7 @@ export function toggleList() {
             listButton.innerHTML = '1.';
             break;
         case 'number':
-            document.execCommand('insertOrderedList', false, null); // This removes the list
+            document.execCommand('insertOrderedList', false, null); 
             newState = 'none';
             listButton.innerHTML = '¶';
             break;

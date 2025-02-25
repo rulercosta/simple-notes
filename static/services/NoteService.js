@@ -25,7 +25,7 @@ export class NoteService {
             content
         );
         this.notes.unshift(newNote);
-        if (title.trim()) {  // Only save if title is not empty
+        if (title.trim()) {  
             this.saveNotes();
         }
         return newNote;
@@ -58,7 +58,6 @@ export class NoteService {
     }
 
     saveNotes() {
-        // Filter out notes with empty titles before saving
         const validNotes = this.notes.filter(note => note.title.trim());
         this.storage.saveNotes(validNotes);
     }
