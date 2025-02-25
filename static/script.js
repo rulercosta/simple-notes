@@ -11,35 +11,28 @@ class NotesApp {
         this.noteService = new NoteService();
         this.viewManager = new ViewManager();
         
-        // Initialize DOM elements first
         this.initializeDOMElements();
         
-        // Now initialize ThemeManager after DOM elements are available
         this.themeManager = new ThemeManager();
         
-        // Text sizes array
         this.textSizes = ['xs', 'sm', 'md', 'lg', 'xl'];
         
-        // Initialize managers
         this.editorManager = new EditorManager(this.editor);
         this.touchManager = new TouchManager(
-            this.detailView,  // Pass detailView
-            this.notesList,   // Pass notesList element
-            () => this.showListView(),  // Pass swipeBack callback
-            (noteId) => this.deleteNote(noteId)  // Pass delete callback
+            this.detailView,  
+            this.notesList,   
+            () => this.showListView(),  
+            (noteId) => this.deleteNote(noteId)  
         );
         this.searchManager = new SearchManager(
             this.noteService,
             (notes) => this.renderNotesList(notes)
         );
 
-        // Set up event listeners
         this.setupEventListeners();
 
-        // Initial render
         this.renderNotesList();
 
-        // Add toolbar event delegation
         this.toolbar = document.querySelector('.toolbar');
         this.toolbar.addEventListener('click', (e) => {
             const button = e.target.closest('[data-action]');
@@ -81,7 +74,6 @@ class NotesApp {
         this.modeToggleBtn.addEventListener('click', () => this.toggleEditMode());
         this.editor.addEventListener('input', () => this.saveNoteContent());
         this.titleInput.addEventListener('input', () => this.saveNoteContent());
-        // Remove the darkModeBtn event listener since ThemeManager handles it
         this.searchInput.addEventListener('input', () => this.handleSearch());
         this.clearSearchBtn.addEventListener('click', () => this.clearSearch());
         
@@ -104,20 +96,16 @@ class NotesApp {
             
             if (listItem) {
                 if (e.shiftKey) {
-                    // Only outdent if there's a parent list
                     const parentList = listItem.closest('ul, ol');
                     const grandparentListItem = parentList?.parentElement?.closest('li');
                     
                     if (parentList && (
-                        // Allow outdent if we're in a nested list
                         grandparentListItem ||
-                        // Or if we're in the root list
                         parentList.parentElement === this.editor
                     )) {
                         document.execCommand('outdent');
                     }
                 } else {
-                    // For indentation, only allow if there's a previous sibling
                     const previousSibling = listItem.previousElementSibling;
                     if (previousSibling && previousSibling.tagName === 'LI') {
                         document.execCommand('indent');
@@ -127,7 +115,6 @@ class NotesApp {
         }
     }
 
-    // Core note operations
     createNewNote() {
         const composeBtn = document.getElementById('new-note-btn');
         composeBtn.classList.add('active');
@@ -148,7 +135,6 @@ class NotesApp {
         const content = this.editor.innerHTML;
 
         if (!title) {
-            // If title is empty, update the UI but don't persist
             const note = this.noteService.getNote(this.activeNoteId);
             if (note) {
                 note.content = content;
@@ -189,7 +175,6 @@ class NotesApp {
         }
     }
 
-    // View management
     showListView() {
         this.listView.classList.add('active');
         this.detailView.classList.remove('active');
@@ -200,23 +185,20 @@ class NotesApp {
         this.toolbar.classList.remove('visible');
         this.modeToggleBtn.innerHTML = '<span class="material-icons">edit</span>';
         
-        // Reset compose button state
         const composeBtn = document.getElementById('new-note-btn');
         composeBtn.classList.remove('active');
         
-        // Remove notes with empty titles when leaving detail view
         const currentNote = this.noteService.getNote(this.activeNoteId);
         if (currentNote && !currentNote.title.trim()) {
             this.noteService.deleteNote(this.activeNoteId);
             this.renderNotesList();
         }
         
-        // Clear active note and editor state
         this.activeNoteId = null;
         this.editor.blur();
         this.titleInput.blur();
         
-        this.detailView.style.transform = '';  // Reset transform
+        this.detailView.style.transform = '';  
         if (this.isAndroid) {
             this.detailView.style.opacity = '';
         }
@@ -237,14 +219,12 @@ class NotesApp {
             '<span class="material-icons">edit</span>';
         this.toolbar.classList.toggle('visible', this.isEditing);
         if (this.isEditing) {
-            // Use editorManager's methods instead
             this.editorManager.undoStack = [];
             this.editorManager.redoStack = [];
             this.editorManager.pushToUndoStack();
         }
     }
 
-    // UI rendering
     renderNotesList() {
         const notes = this.noteService.notes;
         this.notesList.innerHTML = '';
@@ -301,10 +281,7 @@ class NotesApp {
         });
     }
 
-    // Text formatting
     applyTextSize(size) {
-        // Remove the line that removes classes from editor
-        // Instead, wrap selected text in a span with the appropriate class
         
         if (!this.isEditing) return;
         
@@ -313,16 +290,13 @@ class NotesApp {
         
         const range = selection.getRangeAt(0);
         
-        if (range.collapsed) return; // No text selected
+        if (range.collapsed) return; 
         
-        // Create span with the new size class
         const span = document.createElement('span');
         span.classList.add(`text-${size}`);
         
-        // Extract the selected content
         const fragment = range.extractContents();
         
-        // Remove any existing text-* classes from child elements
         const elements = fragment.querySelectorAll('[class*="text-"]');
         elements.forEach(el => {
             const classes = Array.from(el.classList);
@@ -333,13 +307,10 @@ class NotesApp {
             });
         });
         
-        // Add the content to the span
         span.appendChild(fragment);
         
-        // Insert the span
         range.insertNode(span);
         
-        // Restore selection
         selection.removeAllRanges();
         const newRange = document.createRange();
         newRange.selectNodeContents(span);
@@ -355,10 +326,9 @@ class NotesApp {
         if (!selection.rangeCount) return;
         
         const range = selection.getRangeAt(0);
-        if (range.collapsed) return; // No text selected
+        if (range.collapsed) return; 
         
-        // Find the current size of the selection
-        let currentSize = 'md'; // default size
+        let currentSize = 'md'; 
         const node = range.commonAncestorContainer;
         const sizeSpan = node.nodeType === 1 ? node : node.parentElement;
         
@@ -384,10 +354,9 @@ class NotesApp {
         if (!selection.rangeCount) return;
         
         const range = selection.getRangeAt(0);
-        if (range.collapsed) return; // No text selected
+        if (range.collapsed) return; 
         
-        // Find the current size of the selection
-        let currentSize = 'md'; // default size
+        let currentSize = 'md'; 
         const node = range.commonAncestorContainer;
         const sizeSpan = node.nodeType === 1 ? node : node.parentElement;
         
@@ -406,7 +375,6 @@ class NotesApp {
         }
     }
 
-    // Utility methods
     getPreview(content) {
         const div = document.createElement('div');
         div.innerHTML = content;
@@ -425,7 +393,6 @@ class NotesApp {
         });
     }
 
-    // Search functionality
     handleSearch() {
         const searchTerm = this.searchInput.value.toLowerCase();
         this.clearSearchBtn.classList.toggle('visible', searchTerm.length > 0);
@@ -465,7 +432,7 @@ class NotesApp {
         filteredNotes.forEach(note => {
             const noteElement = document.createElement('div');
             noteElement.className = 'note-item';
-            noteElement.dataset.noteId = note.id;  // Add this line
+            noteElement.dataset.noteId = note.id;  
             noteElement.innerHTML = `
                 <div class="note-title">${note.title}</div>
                 <div class="note-preview">${this.getPreview(note.content)}</div>
@@ -476,7 +443,6 @@ class NotesApp {
         });
     }
 
-    // Undo/Redo integration
     undo() {
         if (this.editorManager) {
             this.editorManager.undo();
@@ -492,10 +458,8 @@ class NotesApp {
     }
 }
 
-// Initialize the app
 const app = new NotesApp();
 
-// Export for global access
 window.app = app;
 window.formatText = formatText;
 window.toggleList = toggleList;
