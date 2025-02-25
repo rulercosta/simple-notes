@@ -90,14 +90,13 @@ body {
     align-items: center;
 }
 
-/* Add this new style after the general .header styles */
 .detail-view .header {
-    grid-template-columns: auto 1fr;  /* Override the 3-column layout */
+    grid-template-columns: auto 1fr;  
     gap: 16px;
 }
 
 .detail-view .header-actions {
-    justify-self: end;  /* Align the actions to the right */
+    justify-self: end;  
 }
 
 .header-left {
@@ -182,7 +181,7 @@ body {
 .btn {
     background: none;
     border: none;
-    color: #007AFF;  /* iOS blue */
+    color: #007AFF;  
     font-size: 17px;
     font-weight: 500;
     cursor: pointer;
@@ -217,7 +216,6 @@ body {
     transition: none;
 }
 
-/* Remove the persistent hover state for touch devices */
 @media (hover: none) {
     .btn:hover {
         background-color: transparent;
@@ -288,7 +286,7 @@ body {
 
 .note-preview {
     font-size: 15px;
-    color: var(--text-secondary);  /* iOS secondary text color */
+    color: var(--text-secondary);  
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -311,7 +309,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;  /* Slightly increased gap since we removed separators */
+    gap: 6px;  
     opacity: 0;
     height: 0;
     overflow: hidden;
@@ -324,14 +322,14 @@ body {
 .toolbar.visible {
     opacity: 1;
     height: auto;
-    min-height: 52px;  /* Ensure consistent height */
+    min-height: 52px; 
 }
 
 .toolbar-btn {
-    flex: 1;  /* Each button takes equal space */
-    min-width: 36px;  /* Slightly increased for better touch targets */
-    height: 36px;  /* Slightly increased for better touch targets */
-    padding: 6px;  /* Reduced padding */
+    flex: 1;  
+    min-width: 36px;  
+    height: 36px;  
+    padding: 6px;  
     border: none;
     border-radius: 6px;
     background: none;
@@ -368,7 +366,7 @@ body {
     -webkit-overflow-scrolling: touch;
     user-select: text;
     -webkit-user-select: text;
-    padding-bottom: 16px;  /* Remove env() usage */
+    padding-bottom: 16px; 
 }
 
 .note-title-input {
@@ -381,7 +379,7 @@ body {
     width: 100%;
     letter-spacing: -0.5px;
     border-bottom: 0.5px solid var(--border-color);
-    color: var(--text-primary);  /* Add this line */
+    color: var(--text-primary);  
 }
 
 .editor {
@@ -396,7 +394,6 @@ body {
     color: var(--text-primary);
 }
 
-/* Add these styles for nested lists */
 .editor ul, 
 .editor ol {
     padding-left: 24px;
@@ -407,7 +404,6 @@ body {
     margin: 4px 0;
 }
 
-/* Nested list styles */
 .editor li > ul,
 .editor li > ol {
     margin: 4px 0;
@@ -444,7 +440,6 @@ body {
     letter-spacing: -0.2px;
 }
 
-/* Add before the @media queries */
 .text-xs {
     font-size: 13px;
     line-height: 1.4;
@@ -507,7 +502,6 @@ body {
     }
 }
 
-/* Android-specific touch feedback */
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
     .note-item {
         position: relative;
@@ -531,7 +525,6 @@ body {
         opacity: 0.1;
     }
 
-    /* Better scrolling on Android */
     .notes-list,
     .editor-container {
         scrollbar-width: none;
@@ -544,18 +537,17 @@ body {
     }
 }
 
-/* Add responsive toolbar styles */
 @media (max-width: 360px) {
     .toolbar {
-        padding: 6px 8px;  /* Even smaller padding on very small screens */
-        gap: 2px;  /* Reduce gap further */
+        padding: 6px 8px;  
+        gap: 2px;  
     }
 
     .toolbar-btn {
-        min-width: 28px;  /* Smaller minimum width */
-        height: 28px;  /* Smaller height */
-        padding: 4px;  /* Smaller padding */
-        font-size: 14px;  /* Smaller font */
+        min-width: 28px;  
+        height: 28px;  
+        padding: 4px;  
+        font-size: 14px;  
     }
 }
 
@@ -570,7 +562,7 @@ body {
 }
 
 .compose-btn .material-icons {
-    font-size: 28px;  /* Increased from 20px */
+    font-size: 28px;  
     color: #007AFF;
 }
 
